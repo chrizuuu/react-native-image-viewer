@@ -54,6 +54,10 @@ export const ImageViewer = ({
     }
   }, [listRef, currentImageIndex]);
 
+  const toggleFocus = useCallback(() => {
+    setIsFocused(!isFocused);
+  }, [isFocused]);
+
   const onFocus = useCallback(() => {
     setIsFocused(true);
   }, []);
@@ -92,7 +96,9 @@ export const ImageViewer = ({
               index,
             })}
             keyExtractor={(_, index) => `${index}`}
-            renderItem={({ item }) => <AnimatedImage source={item!} />}
+            renderItem={({ item }) => (
+              <AnimatedImage source={item!} toggleFocus={toggleFocus} />
+            )}
             onScroll={onScroll}
           />
         </GestureHandlerRootView>
