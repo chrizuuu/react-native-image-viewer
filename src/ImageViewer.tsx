@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useRef, useState } from 'react';
 import { ModalContainer } from './components/ModalContainer';
 import { StyleSheet, VirtualizedList, useWindowDimensions } from 'react-native';
@@ -8,19 +7,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import { ImageItemURI } from './types';
+import { ImageItemURI, ImageViewerProps } from './types';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AnimatedImage } from './components/AnimatedImage';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import { DefaultFooter } from './components/DefaultFooter';
 import { DefaultHeader } from './components/DefaultHeader';
-
-interface ImageViewerProps {
-  isVisible: boolean;
-  onRequestClose: () => void;
-  images: ImageItemURI[];
-  initialIndex?: number;
-}
 
 export const ImageViewer = ({
   isVisible,
@@ -62,7 +54,11 @@ export const ImageViewer = ({
     setIsFocused(true);
   }, []);
 
-  const _onClose = useCallback(() => {
+  const onUnFocus = useCallback(() => {
+    setIsFocused(false);
+  }, []);
+
+  const onClose = useCallback(() => {
     onRequestClose();
     onFocus();
   }, [onFocus, onRequestClose]);
@@ -97,7 +93,12 @@ export const ImageViewer = ({
             })}
             keyExtractor={(_, index) => `${index}`}
             renderItem={({ item }) => (
-              <AnimatedImage source={item!} toggleFocus={toggleFocus} />
+              <AnimatedImage
+                source={item!}
+                toggleFocus={toggleFocus}
+                onUnFocus={onUnFocus}
+                onFocus={onFocus}
+              />
             )}
             onScroll={onScroll}
           />
@@ -111,7 +112,7 @@ export const ImageViewer = ({
             <DefaultHeader
               currentIndex={currentImageIndex}
               imagesLenght={images.length}
-              onClose={_onClose}
+              onClose={onClose}
             />
           </Animated.View>
         ) : null}
